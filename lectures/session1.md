@@ -12,7 +12,7 @@
 
 ## Contexte du projet
 
-Tout au long de ce cours, nous utiliserons un projet de création de librairie Python comme prétexte pour découvrir les concepts de développement pythoniques essentiels. Cette librairie sera basée sur des concepts classiques en gestion de portefeuille.
+Nous allons utiliser un projet de création de librairie Python comme prétexte pour découvrir les concepts de développement pythoniques essentiels. Cette librairie sera basée sur des concepts classiques de gestion de portefeuille.
 
 ---
 
@@ -26,7 +26,7 @@ Avant de commencer à coder, configurons notre environnement de développement e
 
 ```bash
 # 1. Créer le projet avec uv
-uv init pyvest --lib
+uv init pyvest --lib --package
 
 # 2. Se placer dans le répertoire du projet
 cd pyvest
@@ -45,16 +45,16 @@ git config --global --list
 git add .
 git commit -m "Initial commit: project structure"
 
-# 7. (Optionnel) Lier à un dépôt distant après création sur GitHub
-# git remote add origin https://github.com/username/pyvest.git
-# git push -u origin main
+# 7. Lier à un dépôt distant après création sur GitHub
+git remote add origin https://github.com/username/pyvest.git
+git push -u origin main #(ou --set-upstream)
 ```
 
 ---
 
-### Étape 1.1 : L'objectif final de cette session
+### Étape 1.1 : L'objectif de cette session
 
-Voici la classe que nous allons construire progressivement au cours de cette session :
+La classe que l'on va construire au cours de cette session :
 
 ```python
 import math
@@ -112,7 +112,7 @@ class PriceSeries:
         - Permet d'approximer la variance multipériode par la somme des variances
         
         Args:
-            t: Position temporelle (doit être >= 1)
+            t: index temporel
 
         Returns:
             Log-rendement
@@ -133,7 +133,7 @@ class PriceSeries:
 
 ### Étape 1.2 : Structure du projet
 
-La structure d'un tel projet pose forcément question. Utilisons le gestionnaire de projet `uv` pour initialiser notre librairie :
+Comment démarrer rapidement le projet ? En utilisant uv.
 
 ```bash
 uv init pyvest --lib --package
@@ -141,7 +141,7 @@ uv init pyvest --lib --package
 
 Cette commande crée la structure suivante :
 
-```
+``` markdown
 pyvest/
 ├── pyproject.toml      # Configuration du projet
 ├── README.md
@@ -154,9 +154,8 @@ pyvest/
 Créons ensuite notre environnement virtuel :
 
 ```bash
-uv venv .venv
-source .venv/bin/activate  # Linux/macOS
-# .venv\Scripts\activate   # Windows
+uv venv -p 3.12 .venv
+source .venv/bin/activate
 ```
 
 ---
@@ -164,11 +163,8 @@ source .venv/bin/activate  # Linux/macOS
 ### Concepts fondamentaux : Module, Package et Librairie
 
 > **Module** : Un fichier Python (`.py`) contenant du code (fonctions, classes, variables) qui peut être importé par d'autres fichiers.
-
 > **Package** : Un répertoire contenant un fichier `__init__.py` et potentiellement d'autres modules ou sous-packages. Le `__init__.py` indique à Python que ce répertoire doit être traité comme un package importable.
-
 > **Librairie** : Une collection de code créée par un tiers, composée d'un ou plusieurs packages. L'utilisateur final n'a pas besoin de connaître le code interne ; il utilise simplement l'interface publique (API).
-
 > **API (Application Programming Interface)** : L'interface publique d'une application. Elle définit comment d'autres programmes peuvent communiquer avec votre code (appeler des fonctions, instancier des classes, etc.).
 
 ---
@@ -188,14 +184,14 @@ class PriceSeries:
     pass
 ```
 
-Testons dans le REPL Python :
+On peut tester dans le REPL (read-eval-print-loop) :
 
 ```python
 >>> from pyvest.priceseries import PriceSeries
->>> ts = PriceSeries()
->>> ts
+>>> ps = PriceSeries()
+>>> ps
 <pyvest.priceseries.PriceSeries object at 0x...>
->>> type(ts)
+>>> type(ps)
 <class 'pyvest.priceseries.PriceSeries'>
 ```
 
@@ -203,30 +199,31 @@ Testons dans le REPL Python :
 
 ### Concept fondamental : Qu'est-ce qu'une classe ?
 
-Une **classe** est un patron (template) qui définit la structure et le comportement d'un type d'objet. On peut la concevoir comme une usine capable de fabriquer des objets selon un modèle défini.
+Une **classe** est un patron / template qui définit la structure et le comportement d'un type d'objet. On peut la concevoir comme une usine capable de fabriquer des objets selon un modèle défini.
 
 Les objets créés à partir d'une classe sont appelés **instances**. Chaque instance possède :
+
 - Des **attributs** : variables propres à l'instance
 - Des **méthodes** : fonctions ayant accès aux attributs de l'instance
 
 ```python
-# PriceSeries est la classe (le patron)
-# ts1 et ts2 sont des instances (les objets créés)
-ts1 = PriceSeries([100, 105, 110], "AAPL")
-ts2 = PriceSeries([50, 52, 51], "MSFT")
+# PriceSeries est la classe
+# ps1 et ps2 sont des instances (les objets créés)
+ps1 = PriceSeries([100, 105, 110], "AAPL")
+ps2 = PriceSeries([50, 52, 51], "MSFT")
 
 # Chaque instance a ses propres données
-ts1.name  # "AAPL"
-ts2.name  # "MSFT"
+ps1.name  # "AAPL"
+ps2.name  # "MSFT"
 ```
 
-> **Note sur `pass`** : C'est une instruction qui ne fait rien. Elle permet de définir des structures vides (classes, fonctions) que l'on complétera plus tard.
+> **Note sur `pass`** : C'est une instruction qui ne fait rien. Elle permet juste de définir des structures vides (classes, fonctions) sans casser le code définit après.
 
 ---
 
-### Concept fondamental : Expression vs Statement (Instruction)
+### Expression vs Statement (Instruction)
 
-Cette distinction est fondamentale pour comprendre Python.
+Petite distinction importante.
 
 Une **expression** est une combinaison de valeurs, variables et opérateurs qui s'évalue pour produire une valeur :
 
@@ -234,8 +231,8 @@ Une **expression** est une combinaison de valeurs, variables et opérateurs qui 
 # Expressions - chacune produit une valeur
 3 + 4              # → 7
 x * 2              # → valeur numérique
-len(my_list)       # → entier
-a > b              # → True ou False
+len(my_list)       # → int
+a > b              # → booléen
 "hello".upper()    # → "HELLO"
 ```
 
@@ -249,19 +246,20 @@ for x in items:    # Boucle
     pass
 def ma_fonction(): # Définition de fonction
     pass
-return valeur      # Retour de fonction
+return valeur      # Retour de fonction (donc contrôle de flux)
 import math        # Import
 x = 5              # Assignation
 ```
 
-> **Cas particulier (Python 3.8+)** : L'opérateur morse `:=` (walrus operator) permet une assignation qui est aussi une expression :
+**Cas particulier** : L'opérateur morse `:=` (walrus operator) permet une assignation qui est aussi une expression :
+
 > ```python
 > # Assignation classique (statement)
 > n = len(data)
 > if n > 10:
 >     print(n)
 > 
-> # Avec walrus operator (expression)
+> # Avec walrus operator (statement + expression)
 > if (n := len(data)) > 10:
 >     print(n)
 > ```
@@ -272,7 +270,7 @@ x = 5              # Assignation
 
 La méthode `__init__` est l'**initialiseur** de la classe. Elle est appelée automatiquement après la création de l'instance pour initialiser ses attributs.
 
-> **Note technique** : On appelle souvent `__init__` le "constructeur" par abus de langage. En réalité, le véritable constructeur en Python est `__new__`, qui crée l'instance. `__init__` reçoit cette instance déjà créée et l'initialise. Pour la plupart des cas d'usage, cette distinction n'a pas d'importance pratique.
+> **Note (peu importante)** : On appelle souvent `__init__` le "constructeur" par abus de langage mais le constructeur en Python est `__new__`, qui crée l'instance. `__init__` reçoit cette instance déjà créée et l'initialise.
 
 ```python
 class PriceSeries:
@@ -280,15 +278,15 @@ class PriceSeries:
     TRADING_DAYS_PER_YEAR: int = 252  # Attribut de classe
     
     def __init__(self, values: list[float], name: str = "unnamed") -> None:
-        self.values = list(values)  # Attribut d'instance (copie défensive)
-        self.name = name            # Attribut d'instance
+        self.values = values  # Attribut d'instance
+        self.name = name      # Attribut d'instance
 ```
 
-Le paramètre `self` est une référence à l'instance spécifique en cours de création. Python le passe automatiquement ; vous ne le fournissez pas lors de l'appel.
+Le paramètre `self` est une référence à l'instance spécifique en cours de création. Python le passe automatiquement lors de l'appel.
 
 ```python
 # Ce que vous écrivez :
-ts = PriceSeries([100, 105], "AAPL")
+ps = PriceSeries([100, 105], "AAPL")
 
 # Ce que Python exécute en coulisses (approximativement) :
 # 1. Création de l'instance via __new__
