@@ -15,13 +15,13 @@ site:
     - title: Sessions
       children:
         - title: Session 1
-          url: /lectures/lecture1
-        - title: Session 2
-          url: /lectures/lecture2
+          url: /lectures/session1
   options:
     logo: null  # Optional: Add your institution logo
     favicon: null
+  domains:
+    - romanschw.github.io
 
   actions:
     - title: View on GitHub
-      url: https://github.com/yourusername/official_python_course
+      url: https://github.com/romanschw/python-course-dauphine
