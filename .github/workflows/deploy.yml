@@ -31,7 +31,7 @@ jobs:
         run: npm install -g mystmd
 
       - name: Build MyST site
-        run: myst build --html --site-url https://romanschw.github.io/python-course-dauphine
+        run: BASE_URL=/python-course-dauphine myst build --html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
