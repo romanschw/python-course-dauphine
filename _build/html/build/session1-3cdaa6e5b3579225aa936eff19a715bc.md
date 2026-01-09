@@ -786,6 +786,22 @@ id(b)    # 140234567891 - différent !
 id(c)    # 140234567890 - identique à a
 ```
 
+**Règle pour `None` :**
+
+```python
+x = None
+
+# ✓ Correct - toujours utiliser 'is' pour None
+if x is None:
+    print("x est None")
+
+# ⚠️ Fonctionne mais déconseillé
+if x == None:
+    print("x est None")
+```
+
+> **Pourquoi ?** `None` est un singleton en Python (un seul objet `None` existe). Utiliser `is` est plus rapide et plus explicite.
+
 ---
 
 ### Concept fondamental : Slicing (découpage)
@@ -818,13 +834,13 @@ last_price = self.values[-1]   # Dernier prix
 Les **exceptions** signalent des conditions anormales. Sans gestion, elles arrêtent le programme.
 
 ```python
-# peut planter
+# ❌ Code fragile - peut planter
 def linear_return(self, t: int) -> float:
     return (self.values[t] - self.values[t-1]) / self.values[t-1]
-    # si t=0 ? → values[-1] (dernier élément, pas ce qu'on veut!)
-    # si t=100 et len(values)=50 ? → IndexError
+    # Que se passe-t-il si t=0 ? → values[-1] (dernier élément, pas ce qu'on veut!)
+    # Que se passe-t-il si t=100 et len(values)=50 ? → IndexError
 
-# robuste avec validation
+# ✓ Code robuste avec validation
 def linear_return(self, t: int) -> float:
     """Rendement linéaire entre t-1 et t."""
     if t < 1:
@@ -848,7 +864,7 @@ except IndexError as e:
 **Exceptions courantes :**
 
 | Exception | Cause typique |
-| ----------- | --------------- |
+|-----------|---------------|
 | `ValueError` | Valeur incorrecte mais type correct |
 | `TypeError` | Type incorrect |
 | `IndexError` | Index hors limites d'une séquence |
