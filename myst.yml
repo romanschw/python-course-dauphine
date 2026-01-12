@@ -1,6 +1,6 @@
 version: 1
 project:
-  title: Applied Python Course
+  title: Introduction à Python
   authors:
     - name: romanschw
   github: https://github.com/romanschw/python-course-dauphine
