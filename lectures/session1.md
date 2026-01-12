@@ -16,7 +16,7 @@ Nous allons utiliser un projet de création de librairie Python comme prétexte 
 
 ---
 
-## Partie 1 : Développement Guidé
+## Partie 1
 
 ---
 
@@ -25,27 +25,21 @@ Nous allons utiliser un projet de création de librairie Python comme prétexte 
 Avant de commencer à coder, configurons notre environnement de développement et initialisons notre dépôt Git.
 
 ```bash
-# 1. Créer le projet avec uv
-uv init pyvest --lib --package
-
-# 2. Se placer dans le répertoire du projet
-cd pyvest
-
-# 3. Initialiser le dépôt Git local
+# Initialiser le dépôt Git local
 git init --initial-branch main
 
-# 4. Configurer votre identité Git (une seule fois par système)
+# Configurer votre identité Git
 git config --global user.name "VotreNom"
 git config --global user.email "votre.email@example.com"
 
-# 5. Vérifier la configuration
+# Vérifier la configuration
 git config --global --list
 
-# 6. Créer le premier commit
+# Créer le premier commit
 git add .
 git commit -m "Initial commit: project structure"
 
-# 7. Lier à un dépôt distant après création sur GitHub
+# Lier à un dépôt distant après création sur GitHub
 git remote add origin https://github.com/username/pyvest.git
 git push -u origin main #(ou --set-upstream)
 ```
@@ -133,7 +127,7 @@ class PriceSeries:
 
 ### Étape 1.2 : Structure du projet
 
-Comment démarrer rapidement le projet ? En utilisant uv.
+Comment démarrer rapidement le projet ? Profitez de la puissance de uv et de ses commandes intégrées:
 
 ```bash
 uv init pyvest --lib --package
@@ -144,9 +138,9 @@ Cette commande crée la structure suivante :
 ``` markdown
 pyvest/
 ├── pyproject.toml      # Configuration du projet
-├── README.md
-└── src/
-    └── pyvest/
+├── README.md           # fichier markdown pour présenter un repo git
+└── src/                # Dossier qui contient le code source de la librairie dans des modules / packages
+    └── pyvest/         
         ├── __init__.py # Fait de pyvest un package
         └── ...         # Nos modules iront ici
 ```
@@ -160,18 +154,23 @@ source .venv/bin/activate
 
 ---
 
-### Concepts fondamentaux : Module, Package et Librairie
+### Module, Package et Librairie
 
 > **Module** : Un fichier Python (`.py`) contenant du code (fonctions, classes, variables) qui peut être importé par d'autres fichiers.
+>
 > **Package** : Un répertoire contenant un fichier `__init__.py` et potentiellement d'autres modules ou sous-packages. Le `__init__.py` indique à Python que ce répertoire doit être traité comme un package importable.
+>
 > **Librairie** : Une collection de code créée par un tiers, composée d'un ou plusieurs packages. L'utilisateur final n'a pas besoin de connaître le code interne ; il utilise simplement l'interface publique (API).
+>
 > **API (Application Programming Interface)** : L'interface publique d'une application. Elle définit comment d'autres programmes peuvent communiquer avec votre code (appeler des fonctions, instancier des classes, etc.).
 
 ---
 
 ### Étape 1.3 : Création de la première classe
 
-Créons notre premier fichier :
+On peut créer notre premier fichier :
+(attention toutes les commandes sont en bash, demandez à votre LLM préféré pour les commandes en powershell)
+(Surtout essayez de comprendre les commandes et pas juste bêtement copier/coller)
 
 ```bash
 touch src/pyvest/priceseries.py
@@ -197,7 +196,7 @@ On peut tester dans le REPL (read-eval-print-loop) :
 
 ---
 
-### Concept fondamental : Qu'est-ce qu'une classe ?
+### Qu'est-ce qu'une classe ?
 
 Une **classe** est un patron / template qui définit la structure et le comportement d'un type d'objet. On peut la concevoir comme une usine capable de fabriquer des objets selon un modèle défini.
 
@@ -304,22 +303,17 @@ ps = instance
 >>> ps = PriceSeries([100.0, 102.5, 101.0, 105.0], "close")
 >>> ps.values
 [100.0, 102.5, 101.0, 105.0]
->>> ts.name
+>>> ps.name
 'close'
 >>> ps.TRADING_DAYS_PER_YEAR  # Accessible via l'instance
 252
 >>> PriceSeries.TRADING_DAYS_PER_YEAR  # Ou via la classe
 252
-
-# Test avec valeur par défaut
->>> ts2 = PriceSeries([50.0, 51.0])
->>> ts2.name
-'unnamed'
 ```
 
 ---
 
-### Concept fondamental : Attributs de classe vs Attributs d'instance
+### Attributs de classe vs Attributs d'instance
 
 | Type | Définition | Partage | Exemple |
 | ------ | ------------ | --------- | --------- |
@@ -328,7 +322,7 @@ ps = instance
 
 ---
 
-### Concept fondamental : Type Hints (Annotations de type)
+### Type Hints (Annotations de type)
 
 Les **type hints** sont des annotations qui indiquent le type attendu des variables, paramètres et valeurs de retour :
 
@@ -348,7 +342,7 @@ def __init__(self, values: list[float], name: str = "unnamed") -> None:
 
 ```python
 # Ce code s'exécute sans erreur malgré les types incorrects
-ts = PriceSeries("pas une liste", 12345)
+ps = PriceSeries("pas une liste", 12345)
 # Mais un type checker signalerait le problème
 ```
 
@@ -368,13 +362,6 @@ b: bool = True
 numbers: list[float] = [1.0, 2.0]
 mapping: dict[str, int] = {"a": 1}
 optional: str | None = None
-
-# Type de retour
-def compute() -> float:
-    return 3.14
-
-def no_return() -> None:
-    print("Je ne retourne rien")
 ```
 
 ---
@@ -389,7 +376,7 @@ class PriceSeries:
     
     def __repr__(self) -> str:
         """Représentation pour les développeurs (debugging)."""
-        return f"PriceSeries({self.name!r}, {len(self.values)} points)"
+        return f"PriceSeries({self.name!r}, {len(self.values)} values)"
     
     def __str__(self) -> str:
         """Représentation pour les utilisateurs."""
@@ -408,21 +395,16 @@ class PriceSeries:
 ```python
 >>> ps = PriceSeries([100.0, 102.5, 105.0], "adjusted")
 >>> ps                    # REPL appelle __repr__
-PriceSeries('adjusted', 3 points)
 >>> print(ps)             # print() appelle __str__
-AAPL: 105.00 (latest)
->>> repr(ts)
-"PriceSeries('adjusted', 3 points)"
->>> str(ts)
-'adjusted: 105.00 (latest)'
+>>> repr(ps)
+>>> str(ps)
 ```
 
 > **Astuce `!r` dans les f-strings** : L'expression `{self.name!r}` applique `repr()` à la valeur, affichant les guillemets pour les strings. Cela aide à distinguer `PriceSeries('AAPL', ...)` de `PriceSeries(AAPL, ...)`.
-> **Conseil de Fluent Python** : Si vous n'implémentez qu'une seule méthode, choisissez `__repr__`. La classe `object` fournit un `__str__` par défaut qui appelle `__repr__` si `__str__` n'est pas défini.
 
 ---
 
-### Concept fondamental : Le Python Data Model et les méthodes spéciales
+### Le Python Data Model et les méthodes spéciales
 
 Le Python Data Model c'est l'API qu'on utilise pour que nos objets customisés intéragissent avec les fonctionnalités pré-intégrées à Python.
 
@@ -454,13 +436,13 @@ git status
 git add src/pyvest/priceseries.py
 
 # Créer un commit avec un message descriptif
-git commit -m "feat(core): add PriceSeries class with __init__, __repr__, __str__"
+git commit -m "feat: add PriceSeries class with __init__, __repr__, __str__"
 
 # Vérifier l'historique
 git log --oneline
 ```
 
-**Convention de commit** : Utilisez des messages clairs suivant le format : `type(scope): description`
+**Convention de commit** : Utilisez des messages clairs, par exemple suivant le format : `type: description`
 
 - `feat`: nouvelle fonctionnalité
 - `fix`: correction de bug
@@ -491,35 +473,23 @@ class PriceSeries:
 ```python
 >>> ps = PriceSeries([100.0, 105.0, 103.0, 110.0], "TEST")
 >>> ps.linear_return(1)  # (105 - 100) / 100
-0.05
->>> ts.log_return(1)     # ln(105 / 100)
-0.04879...
+>>> ps.log_return(1)
 
-# Vérification de l'additivité des log-rendements
->>> sum(ts.log_return(t) for t in range(1, len(ts.values)))
-0.09531...
->>> math.log(110 / 100)  # Log du ratio total
-0.09531...  # Identique !
+# On peut vérifier l'additivité des log-rendements
+>>> sum(ps.log_return(t) for t in range(1, len(ps.values)))
+>>> math.log(110 / 100)
 ```
 
 **Propriétés des rendements :**
 
 | Type | Additivité | Usage principal |
-|------|------------|-----------------|
+| ------ | ------------ | ----------------- |
 | **Linéaire (arithmétique)** | Entre actifs : `r_p = Σ(w_i × r_i)` | Portefeuille, cross-section |
 | **Logarithmique** | Dans le temps : `r_total = Σ(r_t)` | Série temporelle, volatilité |
 
-**Approximation pour petits rendements** (développement de Taylor) :
-
-``` python
-ln(1 + r) ≈ r    pour |r| < 5%
-
-# Développement complet : ln(1+r) = r - r²/2 + r³/3 - r⁴/4 + ...
-```
-
 ---
 
-### Concept fondamental : Les fonctions en Python
+### Les fonctions en Python
 
 Une **fonction** est un bloc de code réutilisable qui effectue une tâche spécifique.
 
@@ -528,13 +498,13 @@ def nom_de_fonction(param1: type1, param2: type2 = valeur_defaut) -> type_retour
     """Docstring décrivant la fonction."""
     # Corps de la fonction
     resultat = param1 + param2
-    return resultat
+    return resultat #optionnel
 ```
 
 **Composants :**
 
 - `def` : mot-clé introduisant la définition
-- `nom_de_fonction` : identifiant (convention : `snake_case`)
+- `nom_de_fonction` : identifiant (convention : `snake_case`, à la différence du `camelCase` par exemple)
 - `param1, param2` : paramètres recevant des valeurs à l'appel
 - `-> type_retour` : annotation du type de retour
 - `return` : instruction optionnelle renvoyant une valeur
@@ -586,7 +556,7 @@ def externe():
 externe()
 ```
 
-**Piège classique** - Modifier une variable globale :
+**Piège classique**: Modifier une variable globale :
 
 ```python
 compteur = 0
@@ -597,7 +567,7 @@ def incrementer():
 
 def incrementer_correct():
     global compteur  # Déclare qu'on utilise la variable globale
-    compteur = compteur + 1  # ✓ Fonctionne
+    compteur = compteur + 1
 ```
 
 ---
@@ -619,26 +589,20 @@ class PriceSeries:
     # ... (code précédent)
     
     def __len__(self) -> int:
-        """Retourne le nombre de points de données."""
         return len(self.values)
 ```
 
 Cette méthode permet à nos instances de fonctionner avec la fonction built-in `len()` :
 
 ```python
->>> ts = PriceSeries([100.0, 105.0, 103.0, 110.0], "TEST")
->>> len(ts)
+>>> ps = PriceSeries([100.0, 105.0, 103.0, 110.0], "TEST")
+>>> len(ps)
 4
->>> bool(ts)  # __len__ active aussi le test de vérité
-True
 >>> empty = PriceSeries([], "EMPTY")
 >>> len(empty)
-0
->>> bool(empty)
-False
 ```
 
-> **Duck Typing en action** : Python ne vérifie pas le type ; il vérifie la présence de la méthode. Tout objet avec `__len__` fonctionne avec `len()`.
+> **Duck Typing en action** : Python ne vérifie pas le type ; il vérifie la présence de la méthode. Tout objet avec `__len__` fonctionne avec `len()`. Pas besoin de type particulier.
 
 ---
 
@@ -681,16 +645,15 @@ class PriceSeries:
 Le décorateur `@property` transforme une méthode en **attribut calculé** :
 
 ```python
->>> ts = PriceSeries([100.0, 105.0, 103.0, 110.0], "TEST")
->>> ts.total_return  # Pas de parenthèses !
-0.1
->>> f"Rendement total: {ts.total_return:.2%}"
+>>> ps = PriceSeries([100.0, 105.0, 103.0, 110.0], "TEST")
+>>> ps.total_return  # Pas de parenthèses car la méthode est accessible comme un attribut
+>>> f"Rendement total: {ps.total_return:.2%}"
 'Rendement total: 10.00%'
 ```
 
 **Avantages de `@property` :**
 
-1. **Syntaxe propre** : `ts.total_return` au lieu de `ts.total_return()`
+1. **Syntaxe propre** : `ps.total_return` au lieu de `ps.total_return()`
 2. **Encapsulation** : Le calcul est caché derrière une interface simple
 3. **Lazy evaluation** : Calculé uniquement quand on y accède
 
@@ -700,6 +663,8 @@ Le décorateur `@property` transforme une méthode en **attribut calculé** :
 - Pas d'effets de bord sur son environnement
 - Calcul relativement léger
 
+On verra plus en détails le concept de décorateur et son fonctionnement un peu plus tard dans le cours.
+
 ---
 
 ### Les variables ne sont pas des boîtes
@@ -707,11 +672,8 @@ Le décorateur `@property` transforme une méthode en **attribut calculé** :
 Il faut penser les variables comme des étiquettes et non des boîtes.
 
 ```python
-# Mauvaise intuition (boîtes)
 # On pourrait croire que b contient une COPIE de a
-
-# ✓ Bonne intuition (étiquettes)
-# a et b sont des étiquettes pointant vers le MÊME objet
+# En réalité, a et b sont des étiquettes pointant vers le MÊME objet
 
 a = [1, 2, 3]
 b = a           # b est une autre étiquette sur le même objet
@@ -729,33 +691,27 @@ print(b)        # [1, 2, 3, 4] - b voit le changement !
 | **Mutable** | Peut être modifié après création | `list`, `dict`, `set`, objets personnalisés |
 
 ```python
-# Immutable - l'objet original n'est pas modifié
+# Immutable: l'objet original n'est pas modifié
 x = 5
 y = x
 x = x + 1  # Crée un NOUVEL objet int
-print(y)   # 5 car y pointe toujours vers l'ancien objet
+print(y)   # 5 car y pointe toujours vers l'ancien objet car immutable
 
-s = "hello"
-s.upper()  # Retourne "HELLO" mais ne modifie pas s
-print(s)   # "hello" - inchangé
-
-# Mutable - l'objet original EST modifié
-a = [1, 2, 3]
-b = a
-a.append(4)  # Modifie l'objet existant
-print(b)     # [1, 2, 3, 4] - b voit le changement !
+# Mutable: l'objet original EST modifié
+# Voir l'exemple précédent de la liste pour démontré
+# qu'une variable n'est pas une boîte
 ```
 
 **Implication pour `PriceSeries` :**
 
 ```python
-# ⚠️ Danger potentiel
+# Danger potentiel
 prices = [100, 105, 110]
-ts = PriceSeries(prices, "TEST")
-prices.append(115)  # Modifie aussi ts.values
-print(ts.values)    # [100, 105, 110, 115]
+ps = PriceSeries(prices, "TEST")
+prices.append(115)  # Modifie aussi ps.values
+print(ps.values)    # [100, 105, 110, 115]
 
-# ✓ Solution : copie défensive dans __init__
+# Solution : copie défensive dans __init__
 def __init__(self, values: list[float], name: str = "unnamed") -> None:
     self.values = list(values)  # Crée une COPIE de la liste
     self.name = name
@@ -763,12 +719,12 @@ def __init__(self, values: list[float], name: str = "unnamed") -> None:
 
 ---
 
-### Concept fondamental : `is` vs `==`
+### Disinction d'opérateur: `is` vs `==`
 
 | Opérateur | Compare | Question posée |
 | ----------- | --------- | ---------------- |
-| `==` | Les **valeurs** | "Ont-ils le même contenu ?" |
-| `is` | L'**identité** (adresse mémoire) | "Sont-ils le même objet ?" |
+| `==` | Les **valeurs** | "Est ce que les variables pointent vers des objets avec la même valeur ?" |
+| `is` | L'**identité** (adresse mémoire) | "Sont-ils le même objet en mémoire ?" |
 
 ```python
 a = [1, 2, 3]
@@ -788,7 +744,7 @@ id(c)    # 140234567890 - identique à a
 
 ---
 
-### Concept fondamental : Slicing (découpage)
+### Slicing (découpage)
 
 Le slicing permet d'extraire des sous-séquences avec la syntaxe `sequence[start:stop:step]` :
 
@@ -797,10 +753,10 @@ prices = [100, 105, 103, 110, 108, 112]
 #          0    1    2    3    4    5   (indices positifs)
 #         -6   -5   -4   -3   -2   -1   (indices négatifs)
 
-# Extraction de base
+# Quelques exemples d'extraction de base
 prices[0]       # 100 - premier élément
 prices[-1]      # 112 - dernier élément
-prices[1:4]     # [105, 103, 110] - indices 1, 2, 3 (stop exclu)
+prices[1:4]     # [105, 103, 110] - indices 1, 2, 3
 prices[:3]      # [100, 105, 103] - du début à l'indice 2
 prices[3:]      # [110, 108, 112] - de l'indice 3 à la fin
 prices[::2]     # [100, 103, 108] - un élément sur deux
@@ -813,7 +769,7 @@ last_price = self.values[-1]   # Dernier prix
 
 ---
 
-### Concept fondamental : Gestion des erreurs (Exceptions)
+### Gestion des erreurs (Exceptions)
 
 Les **exceptions** signalent des conditions anormales. Sans gestion, elles arrêtent le programme.
 
@@ -821,12 +777,11 @@ Les **exceptions** signalent des conditions anormales. Sans gestion, elles arrê
 # peut planter
 def linear_return(self, t: int) -> float:
     return (self.values[t] - self.values[t-1]) / self.values[t-1]
-    # si t=0 ? → values[-1] (dernier élément, pas ce qu'on veut!)
-    # si t=100 et len(values)=50 ? → IndexError
+    # si t=0 ? → values[-1] donc calcul faussé
+    # si t=100 et len(values)=50 on aura une IndexError
 
 # robuste avec validation
 def linear_return(self, t: int) -> float:
-    """Rendement linéaire entre t-1 et t."""
     if t < 1:
         raise ValueError(f"t doit être >= 1, reçu: {t}")
     if t >= len(self.values):
@@ -844,6 +799,8 @@ except ValueError as e:
 except IndexError as e:
     print(f"Index hors limites: {e}")
 ```
+
+On peut également conclure un statement `try/except` par un `finally` pour exécuter une instruction dans tous les cas, qu'une exception soit catch ou pas.
 
 **Exceptions courantes :**
 
@@ -871,39 +828,29 @@ git commit -m "feat(core): add return calculations and __len__ to PriceSeries"
 
 ---
 
-### Exercice 1 : Calcul du vecteur de rendements (15 min)
+### Exercice 1 : Calcul du vecteur de rendements
 
 Implémentez deux méthodes retournant la liste de tous les rendements :
 
 ```python
-def all_linear_returns(self) -> list[float]:
+def get_all_linear_returns(self) -> list[float]:
     """Retourne la liste de tous les rendements linéaires.
-    
+
     Returns:
         Liste de n-1 rendements pour n prix.
     """
     # Votre code ici
     pass
 
-def all_log_returns(self) -> list[float]:
+def get_all_log_returns(self) -> list[float]:
     """Retourne la liste de tous les log-rendements."""
     # Votre code ici
     pass
 ```
 
-**Test attendu :**
-
-```python
->>> ts = PriceSeries([100, 105, 110], "TEST")
->>> ts.all_linear_returns()
-[0.05, 0.047619...]
->>> ts.all_log_returns()
-[0.04879..., 0.04652...]
-```
-
 ---
 
-### Exercice 2 : Volatilité annualisée (25 min)
+### Exercice 2 : Volatilité annualisée
 
 ```python
 def annualized_volatility(self) -> float:
@@ -912,15 +859,13 @@ def annualized_volatility(self) -> float:
     
     Formule: σ_annual = σ_daily × √252
     
-    Note: Le scaling √252 suppose des rendements IID 
-    (indépendants et identiquement distribués).
+    Note: Le scaling √252 suppose des rendements i.i.d
     Cette hypothèse est rarement vérifiée en pratique 
     (clustering de volatilité).
     
     Pour une meilleure estimation, considérer:
     - Modèles GARCH
     - Moyenne mobile exponentielle (EWMA)
-    - Volatilité réalisée (données haute fréquence)
     """
     # Étapes:
     # 1. Obtenir tous les log-rendements
@@ -931,14 +876,9 @@ def annualized_volatility(self) -> float:
     pass
 ```
 
-**Indications :**
-- Utiliser `math.sqrt()`
-- Utiliser `(n-1)` pour l'estimateur non biaisé de la variance
-- Retourner `0.0` si moins de 3 prix
-
 ---
 
-### Exercice 3 : Ratio de Sharpe (20 min)
+### Exercice 3 : Ratio de Sharpe
 
 ```python
 def annualized_return(self) -> float:
@@ -950,43 +890,33 @@ def annualized_return(self) -> float:
 
 def sharpe_ratio(self, risk_free_rate: float = 0.0) -> float:
     """
-    Ratio de Sharpe annualisé.
-    
-    Formule: SR = (μ - r_f) / σ
-    
-    D'après "Elements of Quantitative Investing":
-    "Le ratio de Sharpe est le rendement par unité de risque."
-    
-    Args:
-        risk_free_rate: Taux sans risque ANNUEL (défaut: 0)
-    
-    Returns:
-        Ratio de Sharpe (sans dimension)
-    
-    Note:
-        Le ratio de Sharpe scale avec √T où T est l'horizon.
-        SR_annual ≈ SR_daily × √252
+    Ratio de sharpe annualisé : 
+            - ratio entre les rendements esperés d'une stratégie et sa volatilité
+            - rendement par unité de risque
+        
+        Formule: SR = (μ - r_f) / σ
+        
+        Args:
+            risk_free_rate: taux sans risque annuel
     """
     pass
 ```
 
 ---
 
-### Exercice 4 : Analyse du Drawdown (25 min)
+### Exercice 4 : Max drawdown
 
 ```python
 def drawdown_at(self, t: int) -> float:
     """
-    Calcule le drawdown au temps t.
-    
-    Drawdown = (prix_actuel - pic) / pic
-    Le pic est le prix maximum du début jusqu'au temps t.
-    
+    Retourne le drawdown à l'instant t depuis le début de la série.
+    Mesure le déclin par rapport à un pique historique.
+
     Args:
-        t: Index temporel
-    
+        t (int): index de position de la valeur supérieure de l'intervalle considéré.
+
     Returns:
-        Drawdown en décimal négatif (-0.10 = baisse de 10%)
+        float: drawdown
     """
     pass
 
@@ -1000,45 +930,11 @@ def max_drawdown(self) -> float:
     pass
 ```
 
-**Test attendu :**
-
-```python
->>> ts = PriceSeries([100, 110, 105, 95, 100, 90], "TEST")
->>> ts.drawdown_at(2)   # 105 vs pic 110
--0.0454...
->>> ts.drawdown_at(5)   # 90 vs pic 110
--0.1818...
->>> ts.max_drawdown()
--0.1818...
-```
-
----
-
-### Exercice 5 : Intégration finale (20 min)
-
-```python
-def summary(self) -> str:
-    """Génère un rapport de performance."""
-    return f"""
-    Performance Summary: {self.name}
-    ══════════════════════════════════
-    Points de données: {len(self)}
-    Premier prix:      ${self.values[0]:.2f}
-    Dernier prix:      ${self.values[-1]:.2f}
-    Rendement total:   {self.total_return:.2%}
-    Volatilité:        {self.annualized_volatility():.2%}
-    Ratio de Sharpe:   {self.sharpe_ratio():.2f}
-    Max Drawdown:      {self.max_drawdown():.2%}
-    """
-```
-
----
-
 ### Commit final
 
 ```bash
 git add .
-git commit -m "feat(core): add volatility, sharpe, drawdown to PriceSeries"
+git commit -m "features: add volatility, sharpe, drawdown to PriceSeries"
 ```
 
 ---
@@ -1048,11 +944,11 @@ git commit -m "feat(core): add volatility, sharpe, drawdown to PriceSeries"
 ### Solution - Exercice 1
 
 ```python
-def all_linear_returns(self) -> list[float]:
+def get_all_linear_returns(self) -> list[float]:
     """Retourne la liste de tous les rendements linéaires."""
     return [self.linear_return(t) for t in range(1, len(self.values))]
 
-def all_log_returns(self) -> list[float]:
+def get_all_log_returns(self) -> list[float]:
     """Retourne la liste de tous les log-rendements."""
     return [self.log_return(t) for t in range(1, len(self.values))]
 ```
@@ -1063,16 +959,15 @@ def all_log_returns(self) -> list[float]:
 
 ```python
 def annualized_volatility(self) -> float:
-    """Volatilité annualisée à partir des log-rendements."""
     if len(self.values) < 3:
-        return 0.0
-    
-    log_rets = self.all_log_returns()
-    n = len(log_rets)
-    mean = sum(log_rets) / n
-    variance = sum((r - mean) ** 2 for r in log_rets) / (n - 1)  # Bessel's correction
-    daily_vol = math.sqrt(variance)
-    
+            raise ValueError("Not enough data points")
+            
+    log_returns = self.get_all_log_returns()
+    n = len(log_returns)
+    mean = sum(log_returns) / n
+    var = sum((l_r - mean)**2 for l_r in log_returns) / (n - 1)
+    daily_vol = math.sqrt(var)
+
     return daily_vol * math.sqrt(self.TRADING_DAYS_PER_YEAR)
 ```
 
@@ -1082,15 +977,26 @@ def annualized_volatility(self) -> float:
 
 ```python
 def annualized_return(self) -> float:
-    """Rendement annuel moyen à partir des log-rendements."""
-    if len(self.values) < 2:
-        return 0.0
-    log_rets = self.all_log_returns()
-    mean_daily = sum(log_rets) / len(log_rets)
-    return mean_daily * self.TRADING_DAYS_PER_YEAR
+    """
+    Retourne le rendement annualisé sur toute la période.
+    """
+    if len(self) < 2:
+        raise ValueError("Not enough data points")
+    r = self.get_all_log_returns()
+    return (sum(r) / len(r)) * self.TRADING_DAYS_PER_YEAR
 
 def sharpe_ratio(self, risk_free_rate: float = 0.0) -> float:
-    """Ratio de Sharpe annualisé."""
+    """
+    Ratio de sharpe annualisé : 
+        - ratio entre les rendements esperés d'une stratégie et sa vol
+        - rendement par unité de risque
+    
+    Formule: SR = (μ - r_f) / σ
+    
+    Args:
+        risk_free_rate: taux sans risque annuel
+    
+    """
     vol = self.annualized_volatility()
     if vol == 0:
         return 0.0
@@ -1105,57 +1011,24 @@ def sharpe_ratio(self, risk_free_rate: float = 0.0) -> float:
 ```python
 def drawdown_at(self, t: int) -> float:
     """Drawdown au temps t."""
+    if t < 0 or t >= len(self.values):
+        raise IndexError(f"index {t} is out of range for series of length {len(self.values)}")
+
     peak = max(self.values[:t+1])
+    if peak == 0:
+        return 0.0
     return (self.values[t] - peak) / peak
 
 def max_drawdown(self) -> float:
     """Drawdown maximum sur toute la série."""
-    if len(self.values) < 2:
-        return 0.0
-    return min(self.drawdown_at(t) for t in range(len(self.values)))
+    max_dd = 0.0
+    peak = self.values[0]
+
+    for value in self.values[1:]:
+        peak = max(peak, value)
+        if peak > 0:
+            dd = (value - peak) / peak
+            max_dd = min(max_dd, dd)
+
+    return max_dd
 ```
-
----
-
-## Résumé de la Session 1
-
-### Concepts Python appris
-
-| Concept | Application |
-|---------|-------------|
-| Définition de `class` | Template pour `PriceSeries` |
-| `__init__` | Initialisation avec prix et nom |
-| `__repr__` / `__str__` | Représentations string |
-| `__len__` | Intégration avec `len()` |
-| `@property` | Attributs calculés |
-| Type hints | Documentation du code |
-| Attributs de classe | Constantes partagées (`TRADING_DAYS_PER_YEAR`) |
-| Attributs d'instance | Données propres (`values`, `name`) |
-| Slicing | Extraction de sous-séquences |
-| Exceptions | Gestion des erreurs |
-
-### Concepts de finance quantitative
-
-- Rendements linéaires vs logarithmiques
-- Additivité des rendements
-- Volatilité et ratio de Sharpe
-- Analyse du drawdown
-
----
-
-## Travail à faire
-
-1. **Ajouter une méthode** `rolling_mean(window: int)` calculant la moyenne mobile des rendements
-2. **Recherche** : Quelle est la différence entre l'écart-type d'échantillon et l'écart-type de population ?
-3. **Lecture** : Chapitre 1 de *Fluent Python* sur le Python Data Model
-
----
-
-## Aperçu de la Session 2
-
-Dans la prochaine session, nous :
-
-- Construirons une classe `Asset` utilisant `PriceSeries` (composition)
-- Créerons un `DataLoader` pour récupérer des données réelles
-- Apprendrons les collections Python (listes, dictionnaires, ensembles)
-- Traiterons plusieurs actifs efficacement
