@@ -2,7 +2,7 @@ version: 1
 project:
   title: Introduction à Python
   authors:
-    - name: romanschw
+    - name: Roman Schwalek
   github: https://github.com/romanschw/python-course-dauphine
   # banner: ./banner.png  # Optional: Add a course banner image
 
