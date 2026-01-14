@@ -13,5 +13,4 @@ Cours sur les fondamentaux de Python avec une approche complète du développeme
 
 ## Sessions
 
-- [Session 1:](lectures/session1.md)
-- [Session 2:](lectures/session2.md)
+- [Lecture 1: Introduction à Python](lectures/lecture1.md)
