@@ -10,9 +10,20 @@
 
 ---
 
+Quelques ressources supplémentaires que vous pouvez utilisez pour comprendre les différents concepts:
+
+* Une intro à git en français : <https://pythonds.linogaliana.fr/content/git/>
+* Un blog sur la CLI: <https://dagshub.com/blog/effective-linux-bash-data-scientists/>
+* Le cours du MIT "Missing semester of your CS education": <https://missing.csail.mit.edu/>
+* Ce site d'exercices en Python: <https://www.w3resource.com/python-exercises/>
+* Un super site avec tutos et exercices: <https://www.pythonmorsels.com/articles/>
+* Le fameux leetcode: <https://leetcode.com/>
+
+---
+
 ## Contexte du projet
 
-Nous allons utiliser un projet de création de librairie Python comme prétexte pour découvrir les concepts de développement pythoniques essentiels. Cette librairie sera basée sur des concepts classiques de gestion de portefeuille.
+Nous allons utiliser un projet de création de package Python comme prétexte pour découvrir les concepts de développement pythoniques essentiels. Cette librairie sera basée sur des concepts classiques de gestion de portefeuille.
 
 ---
 
