@@ -418,7 +418,7 @@ De manière générale, un système de cache est un système permettant de stock
 
 ```bash
 # Dans le terminal :
-uv add yfinance
+uv pip install yfinance
 # ou 
 pip install yfinance
 ```
